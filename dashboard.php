@@ -1,20 +1,14 @@
 <?php
 include 'database/conn.php';
-session_start();
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit();
-}
 $get_books = mysqli_query($conn, "SELECT * FROM books");
 
-$count_all_books = mysqli_fetch_assoc(mysqli_query($conn,"SELECT count(*) as total FROM books"));
-while($row = ($count_all_books) ) {
-    $count = $row['total'];
-}
 
-if($count == 0) {
+$count_all_books = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as total FROM books"));
+    $count = $count_all_books['total'];
+
+
+if ($count == 0) {
     $count = 0;
     $available_books = 0;
     $borrowed_books = 0;
@@ -27,8 +21,6 @@ if($count == 0) {
 
 $page_title = 'Dashboard - Library Management System';
 include 'includes/header.php';
-
-
 
 ?>
 

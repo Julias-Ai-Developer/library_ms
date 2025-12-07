@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'includes/header.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $page_title = 'Settings - Library Management System';
-include 'includes/header.php';
 ?>
 
 <body>

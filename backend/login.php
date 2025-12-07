@@ -18,16 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['full_name'] = $user['full_name'];
 
-                echo "Welcome " . $user['full_name'];
+                $_SESSION['success'] = 'Login Successfully';
+                header('Location: ../dashboard.php');
+                exit();
             } else {
-                echo 'Incorrect password';
+                $_SESSION['error'] = 'Incorrect password';
+                header('Location: ../login.php');
+                exit();
             }
         } else {
-            echo "User not found";
+            $_SESSION['error'] = 'User not found';
+            header('Location: ../login.php');
+            exit();
         }
     }
 } else {
     echo 'Invalid request method';
 }
-
-?>

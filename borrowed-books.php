@@ -1,6 +1,6 @@
 <?php
 include 'database/conn.php';
-session_start();
+include 'includes/header.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 $get_books = mysqli_query($conn, "SELECT * FROM books WHERE status='borrowed'");
 
 $page_title = 'Borrowed Books - Library Management System';
-include 'includes/header.php';
 ?>
 
 <body>
