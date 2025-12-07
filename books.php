@@ -6,7 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit();
 }
-$get_books = mysqli_query($conn, "SELECT * FROM books WHERE status='available'");
+$_get_members = mysqli_query($conn, "SELECT * FROM members");
+$get_books = mysqli_query($conn, "SELECT * FROM books");
 
 $page_title = 'Books - Library Management System';
 ?>
@@ -52,34 +53,116 @@ $page_title = 'Books - Library Management System';
                                     <td><?php echo $row['book_name']; ?></td>
                                     <td><?php echo $row['author']; ?></td>
                                     <td><?php echo $row['isbn']; ?></td>
-                    <td><?php echo $row['publisher']; ?></td>
+                                    <td><?php echo $row['publisher']; ?></td>
                                     <td><?php echo $row['publication_year']; ?></td>
                                     <td>Ugx <?php echo $row['price']; ?></td>
                                     <td><?php echo $row['quantity']; ?></td>
                                     <td><span class="badge success"><?php echo ucfirst($row['status']); ?></span></td>
                                     <td>
-                                        <button class="btn btn-add" style="padding: 5px 10px; font-size: 12px; background: #17a2b8;" 
-                                                onclick="openBorrowModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')" 
-                                                title="Borrow Book">
+                                        <button class="btn btn-add"
+                                            style="padding: 5px 10px; font-size: 12px; background: #17a2b8;"
+                                            onclick="openBorrowModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')"
+                                            title="Borrow Book">
                                             <i class="fas fa-book-reader"></i>
                                         </button>
-                                        <button class="btn btn-add" style="padding: 5px 10px; font-size: 12px; background: #ffc107; margin-left: 5px;" 
-                                                onclick="openReturnModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')" 
-                                                title="Return Book">
+                                        <button class="btn btn-add"
+                                            style="padding: 5px 10px; font-size: 12px; background: #ffc107; margin-left: 5px;"
+                                            onclick="openReturnModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')"
+                                            title="Return Book">
                                             <i class="fas fa-undo"></i>
                                         </button>
-                                        <button class="btn btn-add" style="padding: 5px 10px; font-size: 12px; background: #28a745; margin-left: 5px;" 
-                                                onclick="openEditModal(<?php echo $row['id']; ?>)" 
-                                                title="Edit Book">
+                                        <button class="btn btn-add"
+                                            style="padding: 5px 10px; font-size: 12px; background: #28a745; margin-left: 5px;"
+                                            onclick="openEditModal('editModal<?php echo $row['id']; ?>')" title="Edit Book">
                                             <i class="fas fa-edit"></i>
+
                                         </button>
-                                        <button class="btn btn-add" style="padding: 5px 10px; font-size: 12px; background: #dc3545; margin-left: 5px;" 
-                                                onclick="openDeleteModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')" 
-                                                title="Delete Book">
+                                        <button class="btn btn-add"
+                                            style="padding: 5px 10px; font-size: 12px; background: #dc3545; margin-left: 5px;"
+                                            onclick="openDeleteModal(<?php echo $row['id']; ?>, '<?php echo addslashes($row['book_name']); ?>')"
+                                            title="Delete Book">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
+
                                 </tr>
+
+                                <!-- Edit Book Modal -->
+                                <div class="modal" id="editModal<?php echo $row['id']; ?>">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2 class="modal-title">Edit Book</h2>
+                                            <button class="close-modal"
+                                                onclick="closeModal('editModal<?php echo $row['id']; ?>')">&times;</button>
+                                        </div>
+                                        <form method="post" action="./backend/edit-book.php">
+                                            <input type="hidden" name="book_id" value="<?php echo $row['id']; ?>">
+                                            <div class="form-group">
+                                                <label>Book Title</label>
+                                                <input type="text" name="book_name" value="<?php echo $row['book_name']; ?>"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Author</label>
+                                                <input type="text" name="author" value="<?php echo $row['author']; ?>"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>ISBN</label>
+                                                <input type="text" name="isbn" value="<?php echo $row['isbn']; ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Price</label>
+                                                <input type="number" name="price" value="<?php echo $row['price']; ?>"
+                                                    step="0.01" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Publisher</label>
+                                                <input type="text" name="publisher" value="<?php echo $row['publisher']; ?>"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Year Published</label>
+                                                <input type="number" name="publication_year"
+                                                    value="<?php echo $row['publication_year']; ?>" min="1000" max="2100"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Quantity</label>
+                                                <input type="number" name="quantity" value="<?php echo $row['quantity']; ?>"
+                                                    min="1" required>
+                                            </div>
+                                            <button type="submit" name="edit_book" class="btn-primary">Update
+                                                Book</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Book Modal -->
+                                <div class="modal" id="deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2 class="modal-title">Delete Book</h2>
+                                            <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
+                                        </div>
+                                        <form method="post" action="./backend/delete-book.php">
+                                            <input type="hidden" name="book_id" id="delete_book_id">
+                                            <p style="margin: 20px 0; font-size: 16px;">Are you sure you want to delete
+                                                this book?</p>
+                                            <p style="margin: 10px 0; font-weight: 600; color: #dc3545;"
+                                                id="delete_book_name"></p>
+                                            <p style="margin: 20px 0; font-size: 14px; color: #666;">This action cannot
+                                                be undone.</p>
+                                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                                <button type="button" onclick="closeModal('deleteModal')"
+                                                    style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+                                                <button type="submit" name="delete_book"
+                                                    style="flex: 1; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;">Delete</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
                             <?php } ?>
                         </tbody>
                     </table>
@@ -118,7 +201,8 @@ $page_title = 'Books - Library Management System';
                 </div>
                 <div class="form-group">
                     <label>Year Published</label>
-                    <input type="number" name="publication_year" placeholder="Enter year" min="1000" max="2100" required>
+                    <input type="number" name="publication_year" placeholder="Enter year" min="1000" max="2100"
+                        required>
                 </div>
                 <div class="form-group">
                     <label>Quantity</label>
@@ -148,8 +232,19 @@ $page_title = 'Books - Library Management System';
                 </div>
                 <div class="form-group">
                     <label>Borrower Name</label>
-                    <input type="text" name="borrower_name" value="<?php echo $_SESSION['full_name']; ?>" readonly style="background: #f5f5f5;">
+                    <select style="width: 100%; padding: 12px; border: 2px solid #E7F7F1; border-radius: 8px;"
+                        name="membership_type" required>
+                        <option value="select" selected disabled>
+                            Select
+                        </option>
+                        <?php while ($row = mysqli_fetch_assoc($_get_members)): ?>
+                            <option value="<?php echo $row['id']; ?>">
+                                <?php echo $row['full_name']; ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
+
                 <div class="form-group">
                     <label>Borrow Date</label>
                     <input type="date" name="borrow_date" value="<?php echo date('Y-m-d'); ?>" required>
@@ -195,67 +290,6 @@ $page_title = 'Books - Library Management System';
         </div>
     </div>
 
-    <!-- Edit Book Modal -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Edit Book</h2>
-                <button class="close-modal" onclick="closeModal('editModal')">&times;</button>
-            </div>
-            <form method="post" action="./backend/edit-book.php">
-                <input type="hidden" name="book_id" id="edit_book_id">
-                <div class="form-group">
-                    <label>Book Title</label>
-                    <input type="text" name="book_name" id="edit_book_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Author</label>
-                    <input type="text" name="author" id="edit_author" required>
-                </div>
-                <div class="form-group">
-                    <label>ISBN</label>
-                    <input type="text" name="isbn" id="edit_isbn" required>
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input type="number" name="price" id="edit_price" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>Publisher</label>
-                    <input type="text" name="publisher" id="edit_publisher" required>
-                </div>
-                <div class="form-group">
-                    <label>Year Published</label>
-                    <input type="number" name="publication_year" id="edit_year" min="1000" max="2100" required>
-                </div>
-                <div class="form-group">
-                    <label>Quantity</label>
-                    <input type="number" name="quantity" id="edit_quantity" min="1" required>
-                </div>
-                <button type="submit" name="edit_book" class="btn-primary">Update Book</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Delete Book Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Delete Book</h2>
-                <button class="close-modal" onclick="closeModal('deleteModal')">&times;</button>
-            </div>
-            <form method="post" action="./backend/delete-book.php">
-                <input type="hidden" name="book_id" id="delete_book_id">
-                <p style="margin: 20px 0; font-size: 16px;">Are you sure you want to delete this book?</p>
-                <p style="margin: 10px 0; font-weight: 600; color: #dc3545;" id="delete_book_name"></p>
-                <p style="margin: 20px 0; font-size: 14px; color: #666;">This action cannot be undone.</p>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="button" onclick="closeModal('deleteModal')" style="flex: 1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
-                    <button type="submit" name="delete_book" style="flex: 1; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script>
         function openModal(modalId) {
@@ -278,11 +312,10 @@ $page_title = 'Books - Library Management System';
             openModal('returnModal');
         }
 
-        function openEditModal(bookId) {
-            // You'll need to fetch book data via AJAX here
-            // For now, just open the modal
-            openModal('editModal');
+        function openEditModal(modalId) {
+            openModal(modalId);
         }
+
 
         function openDeleteModal(bookId, bookName) {
             document.getElementById('delete_book_id').value = bookId;

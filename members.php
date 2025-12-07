@@ -24,7 +24,6 @@ $page_title = 'Members - Library Management System';
 
             <div class="content">
                 <h1 class="page-title">Library Members</h1>
-                <?php include 'includes/toasters.php' ?>
 
                 <div class="card">
                     <div class="card-header">

@@ -67,9 +67,24 @@ if (!$create_table_members) {
     die("Error creating members table: " . mysqli_error($conn));
 }
 
+$create_table_borrowed_books = mysqli_query(
+    $conn,
+    "CREATE TABLE IF NOT EXISTS borrow_book (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        book_id INT,
+        member_id INT,
+        borrow_date DATE,
+        return_date DATE,
+        status VARCHAR(20) DEFAULT 'borrowed'
+    )"
+);
+
+if (!$create_table_borrowed_books) {
+    die("Error creating borrowed books table: " . mysqli_error($conn));
+}   
 
 
 // Add status column to existing tables (won't error if column already exists)
-// mysqli_query($conn, "ALTER TABLE books ADD COLUMN status VARCHAR(20) DEFAULT 'available'");
+// mysqli_query($conn, "ALTER TABLE borrow_book ADD COLUMN status VARCHAR(20) DEFAULT 'borrowed'");
 
 ?>

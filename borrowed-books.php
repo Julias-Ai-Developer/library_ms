@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit();
 }
-$get_books = mysqli_query($conn, "SELECT * FROM books WHERE status='borrowed'");
+$get_books = mysqli_query($conn, "SELECT * FROM borrow_book  bk JOIN books b ON bk.book_id=b.id  WHERE b.status ='borrowed'");
 
 $page_title = 'Borrowed Books - Library Management System';
 ?>

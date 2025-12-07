@@ -1,5 +1,6 @@
 <?php
 include 'includes/header.php';
+include 'database/conn.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
