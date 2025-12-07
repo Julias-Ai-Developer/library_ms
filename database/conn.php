@@ -51,6 +51,23 @@ $create_table_books = mysqli_query(
 if (!$create_table_books) {
     die("Error creating books table: " . mysqli_error($conn));
 }
+$create_table_members = mysqli_query(
+$conn,"CREATE TABLE IF NOT EXISTS members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100),
+    email VARCHAR(100),
+    phone_number VARCHAR(20),
+    address VARCHAR(255),
+    membership_type VARCHAR(20)
+) "
+
+);
+
+if (!$create_table_members) {
+    die("Error creating members table: " . mysqli_error($conn));
+}
+
+
 
 // Add status column to existing tables (won't error if column already exists)
 // mysqli_query($conn, "ALTER TABLE books ADD COLUMN status VARCHAR(20) DEFAULT 'available'");

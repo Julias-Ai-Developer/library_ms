@@ -1,5 +1,6 @@
 <?php
 include 'includes/header.php';
+include 'database/conn.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -7,7 +8,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$get_members =  mysqli_query($conn,"SELECT * FROM members");
+
+
 $page_title = 'Members - Library Management System';
+
 ?>
 
 <body>
@@ -19,6 +24,7 @@ $page_title = 'Members - Library Management System';
 
             <div class="content">
                 <h1 class="page-title">Library Members</h1>
+                <?php include 'includes/toasters.php' ?>
 
                 <div class="card">
                     <div class="card-header">
@@ -27,31 +33,20 @@ $page_title = 'Members - Library Management System';
                             New Member</button>
                     </div>
                     <div class="member-grid">
+                        
+                        <?php while ($member = mysqli_fetch_assoc($get_members)): ?>
+
                         <div class="member-card">
-                            <div class="member-avatar">JS</div>
-                            <div class="member-name">John Smith</div>
-                            <div class="member-email">john.smith@email.com</div>
+                        
+                            <div class="member-avatar"><?php echo $member['full_name'][0]?></div>
+                            <div class="member-name"><?php echo $member['full_name'] ?></div>
+                            <div class="member-email"><?php echo $member['email'] ?></div>
                             <span class="badge success">Active</span>
                         </div>
-                        <div class="member-card">
-                            <div class="member-avatar">EJ</div>
-                            <div class="member-name">Emily Johnson</div>
-                            <div class="member-email">emily.j@email.com</div>
-                            <span class="badge success">Active</span>
-                        </div>
-                        <div class="member-card">
-                            <div class="member-avatar">MB</div>
-                            <div class="member-name">Michael Brown</div>
-                            <div class="member-email">m.brown@email.com</div>
-                            <span class="badge success">Active</span>
-                        </div>
-                        <div class="member-card">
-                            <div class="member-avatar">SD</div>
-                            <div class="member-name">Sarah Davis</div>
-                            <div class="member-email">sarah.d@email.com</div>
-                            <span class="badge success">Active</span>
-                        </div>
+                            <?php endwhile; ?>
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -64,33 +59,33 @@ $page_title = 'Members - Library Management System';
                 <h2 class="modal-title">Add New Member</h2>
                 <button class="close-modal" onclick="closeModal('memberModal')">&times;</button>
             </div>
-            <form onsubmit="addMember(event)">
+            <form method="post" action="./backend/add-members.php" >
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" placeholder="Enter full name" required>
+                    <input type="text" name="full_name" placeholder="Enter full name" required>
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="Enter email" required>
+                    <input type="email" name="email" placeholder="Enter email" required>
                 </div>
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="tel" placeholder="Enter phone number" required>
+                    <input type="tel" name="phone" placeholder="Enter phone number" required>
                 </div>
                 <div class="form-group">
                     <label>Address</label>
-                    <input type="text" placeholder="Enter address" required>
+                    <input type="text" name="address" placeholder="Enter address" required>
                 </div>
                 <div class="form-group">
                     <label>Membership Type</label>
-                    <select style="width: 100%; padding: 12px; border: 2px solid #E7F7F1; border-radius: 8px;" required>
+                    <select style="width: 100%; padding: 12px; border: 2px solid #E7F7F1; border-radius: 8px;" name="membership_type" required>
                         <option value="">Select type</option>
                         <option value="student">Student</option>
                         <option value="adult">Adult</option>
                         <option value="senior">Senior</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">Add Member</button>
+                <button type="submit" class="btn-primary" name="add_member">Add Member</button>
             </form>
         </div>
     </div>
@@ -102,12 +97,6 @@ $page_title = 'Members - Library Management System';
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
-        }
-
-        function addMember(e) {
-            e.preventDefault();
-            closeModal('memberModal');
-            alert('Member added successfully!');
         }
 
         window.onclick = function (event) {
