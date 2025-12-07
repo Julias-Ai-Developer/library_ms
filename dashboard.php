@@ -1,22 +1,29 @@
 <?php
 include 'database/conn.php';
+$get_members = mysqli_fetch_assoc(mysqli_query($conn,'SELECT count(*) as total_members FROM members'));
+$total_members = $get_members['total_members'];
+if($total_members > 0) {
+    $all_total_members = $total_members;
+} else {
+    $all_total_members = 0;
+}
 
-$get_books = mysqli_query($conn, "SELECT * FROM books");
+
+$get_books = mysqli_query($conn, "SELECT * FROM books LIMIT 3");
 
 
 $count_all_books = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as total FROM books"));
     $count = $count_all_books['total'];
 
-
+if($count > 0)
 if ($count == 0) {
     $count = 0;
     $available_books = 0;
     $borrowed_books = 0;
-    $members = 0;
+    
 } else {
     $available_books = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM books WHERE status='available'"));
     $borrowed_books = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM books WHERE status='borrowed'"));
-    $members = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users"));
 }
 
 $page_title = 'Dashboard - Library Management System';
@@ -67,7 +74,7 @@ include 'includes/header.php';
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>428</h3>
+                            <h3><?php echo $all_total_members; ?></h3>
                             <p>Members</p>
                         </div>
                     </div>
